@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard &raquo; Main Sensors</title>
+  <link rel="stylesheet" type="text/css" href="../../assets/lib/bootstrap/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../assets/css/keen-dashboards.css" />
+</head>
+<body class="application">
+
+
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-sm-3">
+        <div class="chart-wrapper">
+          <div class="chart-title">
+            Readings per Hour
+          </div>
+          <div class="chart-stage" id="chart-00b">
+              //<img data-src="holder.js/100%x120/white">
+          </div>
+          <div class="chart-notes">
+            (60 minute rolling average)
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-9">
+        <div class="chart-wrapper">
+          <div class="chart-title">
+            (drag area to zoom-in, right-click to reset)
+          </div>
+          <div class="chart-stage" id="chart-00">
+              //<img data-src="holder.js/100%x120/white">
+          </div>
+          <div class="chart-notes">
+            Auto-refreshes every 30 seconds.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-3">
+        <div class="chart-wrapper">
+          <div class="chart-title">
+            Current Temperature
+          </div>
+          <div class="chart-stage" id="chart-02b">
+              //<img data-src="holder.js/100%x120/white">
+          </div>
+          <div class="chart-notes">
+            (2 minute rolling average)
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-9">
+        <div class="chart-wrapper">
+          <div class="chart-title">
+            (drag area to zoom-in, right-click to reset)
+          </div>
+          <div class="chart-stage" id="chart-02">
+              //<img data-src="holder.js/100%x120/white">
+          </div>
+          <div class="chart-notes">
+            Auto-refreshes every 30 seconds.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-3">
+        <div class="chart-wrapper">
+          <div class="chart-title">
+            Current Temperature
+          </div>
+          <div class="chart-stage" id="chart-03b">
+              //<img data-src="holder.js/100%x120/white">
+          </div>
+          <div class="chart-notes">
+            (2 minute rolling average)
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-9">
+        <div class="chart-wrapper">
+          <div class="chart-title">
+            (drag area to zoom-in, right-click to reset)
+          </div>
+          <div class="chart-stage" id="chart-03">
+              //<img data-src="holder.js/100%x120/white">
+          </div>
+          <div class="chart-notes">
+            Auto-refreshes every 30 seconds.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-3">
+        <div class="chart-wrapper">
+          <div class="chart-title">
+            keen IO Stats
+          </div>
+          <div class="chart-stage" id="chart-04b">
+              //<img data-src="holder.js/100%x120/white">
+          </div>
+          <div class="chart-notes">
+            Total Data Events for Month
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-9">
+        <div class="chart-wrapper">
+          <div class="chart-title">
+            Cell Title
+          </div>
+          <div class="chart-stage">
+              <img data-src="holder.js/100%x120/white">
+          </div>
+          <div class="chart-notes">
+            Notes about this chart
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <hr>
+
+    <p class="small text-muted">Built with &#9829; by <a href="https://keen.io">Keen IO</a></p>
+
+  </div>
+
+  <script type="text/javascript" src="../../assets/lib/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="../../assets/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+
+  <script type="text/javascript" src="../../assets/lib/holderjs/holder.js"></script>
+  <script>
+    Holder.add_theme("white", { background:"#fff", foreground:"#a7a7a7", size:10 });
+  </script>
+
+  <script type="text/javascript" src="../../assets/lib/keen-js/dist/keen.min.js"></script>
+  <script type="text/javascript" src="../../assets/js/meta.js"></script>
+
+	<script type="text/javascript">
+		var client = new Keen({
+			projectId: "53e30cc333e4061149000003",
+			readKey: "86e4bf9a678cace2f791e78efdb7b0e075c769fa26c67f6768a71111a972fc154c784e8a92871722bc8e020f29333a6e7758dda21884dfb146d230481a6e243842056e5c966611cb6f95bb6f290d298f65ccefb032dae704557b35ee42c9767dfb8064ec104321d56ef2c6205a915fa0"
+			
+		});
+		Keen.ready(function(){
+			var interval = "minutely"
+			var timeframe = "this_60_minutes"
+		
+			var keenEvents = new Keen.Query("count", {
+				eventCollection: "Test 2",
+				timeframe: "this_1_months",
+				timezone: "UTC"
+			});			
+			var readingsHr = new Keen.Query("count", {
+				eventCollection: "Test 2",
+				timeframe: "this_60_minutes",
+				timezone: "UTC"
+			});			
+			var remoteCurrent = new Keen.Query("average", {
+				eventCollection: "Test 2",
+				targetProperty: "RemoteSensor1.temp",
+				timeframe: "this_2_minutes", // NOTE:  using only 1 minute often returns no result (not sure why)
+				timezone: "UTC"
+			});			
+			var boardCurrent = new Keen.Query("average", {
+				eventCollection: "Test 2",
+				targetProperty: "BoardSensor1.temp",
+				timeframe: "this_2_minutes",
+				timezone: "UTC"
+			});			
+			var remote = new Keen.Query("average", {
+				eventCollection: "Test 2",
+				interval: interval,
+				targetProperty: "RemoteSensor1.temp",
+				timeframe: timeframe,
+				timezone: "UTC"
+			});
+			var board = new Keen.Query("average", {
+				eventCollection: "Test 2",
+				interval: interval,
+				targetProperty: "BoardSensor1.temp",
+				timeframe: timeframe,
+				timezone: "UTC"
+			});
+			
+			var chart0b = new Keen.Dataviz()
+				.el(document.getElementById("chart-00b"))
+				.chartType("metric");								
+			var chart0 = new Keen.Dataviz()
+				.el(document.getElementById("chart-00"))
+				.chartType("linechart");
+			var chart1 = new Keen.Dataviz()
+				.el(document.getElementById("chart-02"))
+				.chartType("linechart");
+			var chart1b = new Keen.Dataviz()
+				.el(document.getElementById("chart-02b"))
+				.chartType("metric");
+			var chart2 = new Keen.Dataviz()
+				.el(document.getElementById("chart-03"))
+				.chartType("linechart");
+			var chart2b = new Keen.Dataviz()
+				.el(document.getElementById("chart-03b"))
+				.chartType("metric");								
+			var chart3b = new Keen.Dataviz()
+				.el(document.getElementById("chart-04b"))
+				.chartType("metric");								
+		//chart.attributes used for keen's chart settings (over-rides Google API)
+		chart0.attributes({
+				title: "All Temperatures, °C (last hour)",
+				titlePosition: 'out',
+				titleTextStyle: {
+						color: 'black',
+						fontSize: 20
+				}
+		});
+		chart1.attributes({
+				title: "Remote Temperature, °C (last hour)",
+				//width: 900,
+				//height: 450,
+				titlePosition: 'out',
+				titleTextStyle: {
+						color: 'black',
+						fontSize: 20
+				}
+		});
+		chart2.attributes({
+				title: "Board Temperature, °C (last hour)",
+				//width: 900,
+				//height: 450,
+				titlePosition: 'out',
+				titleTextStyle: {
+						color: 'black',
+						fontSize: 20
+				}
+		});
+		chart0b.attributes({
+				title: "readings/hr",
+			colors: ['#A9A9A9']
+		});
+		chart1b.attributes({
+				title: "Remote °C",
+				colors: ['red']
+		});
+		chart2b.attributes({
+				title: "Board °C",
+				colors: ['green']
+		});
+		chart3b.attributes({
+				title: "Events Total",
+				colors: ['#4B4B4B']
+		});
+		
+		//chart.chartOptions passes args directly to Google Charts API (or C3/Charts.js)
+		chart0.chartOptions({
+				vAxis: {
+						minValue: 20,
+			maxValue: 45,
+						minorGridlines: {
+								count: 5
+						}
+				},
+				explorer: {
+						actions: ['dragToZoom', 'rightClickToReset'] 
+				}
+		});
+		chart1.chartOptions({
+				vAxis: {
+						minValue: 20,
+			maxValue: 45,
+						minorGridlines: {
+								count: 5
+						}
+				},
+				explorer: {
+						actions: ['dragToZoom', 'rightClickToReset'] 
+				}
+		});
+		chart2.chartOptions({
+				vAxis: {
+						minValue: 20,
+			maxValue: 45,
+						minorGridlines: {
+								count: 5
+						}
+				},
+				explorer: {
+						actions: ['dragToZoom', 'rightClickToReset'] 
+				}
+		});
+		// start spinners
+		chart0b.prepare();
+		chart0.prepare();
+		chart1.prepare();
+		chart1b.prepare();
+		chart2.prepare();
+		chart2b.prepare();
+		chart3b.prepare();
+ 		var req0b = client.run(readingsHr, function(err, res){
+			if (err) {
+				// Display the API error
+				chart0b.error(err.message);
+			}
+			else {
+				// Handle the response
+				chart0b
+					.parseRequest(this)
+					.render();
+			}
+		});
+		var req1 = client.run(remote, function(err, res){
+			if (err) {
+				// Display the API error
+				chart1.error(err.message);
+			}
+			else {
+				// Handle the response
+				chart1
+					.parseRequest(this)
+					.render();
+			}
+		});
+		var req1b = client.run(remoteCurrent, function(err, res){
+			if (err) {
+				// Display the API error
+				chart1b.error(err.message);
+			}
+			else {
+				// Handle the response
+				chart1b
+					.parseRequest(this)
+					.render();
+			}
+		});
+		var req2 = client.run(board, function(err, res){
+			if (err) {
+				// Display the API error
+				chart2.error(err.message);
+			}
+			else {
+				// Handle the response
+				chart2
+					.parseRequest(this)
+					.render();
+			}
+		});
+		var req2b = client.run(boardCurrent, function(err, res){
+			if (err) {
+				// Display the API error
+				chart2b.error(err.message);
+			}
+			else {
+				// Handle the response
+				chart2b
+					.parseRequest(this)
+					.render();
+			}
+		});
+		var req3b = client.run(keenEvents, function(err, res){
+			if (err) {
+				// Display the API error
+				chart3b.error(err.message);
+			}
+			else {
+				// Handle the response
+				chart3b
+					.parseRequest(this)
+					.render();
+			}
+		});
+		// handle our combined line graph a bit differently
+		var req0 = client.run([remote, board], function(err, res){ // run the 2 queries
+			if (err) {
+				// Display the API error
+				chart0.error(err.message);
+			}
+			else {
+				// Handle the response
+				var result1 = res[0].result // data from first query
+				var result2 = res[1].result // data from second query
+				var data =[] // place for combined results
+				var i = 0
+				
+				while (i < result1.length) {
+	
+					data[i]={ // format the data so it can be charted
+							timeframe: result1[i]["timeframe"],
+							value: [
+									{ category: "Remote °C", result: result1[i]["value"] },
+									{ category: "Board °C", result: result2[i]["value"] }
+							]
+					}
+					if (i == result1.length-1) { // chart the data
+					chart0
+						.parseRawData({ result: data })
+						//.title("Remote & Board Sensor Temps (30 second auto-updates)")
+						.render();
+					}
+					i++;
+				}
+			}
+		});
+		// Re-run and refresh every half minute...
+		setInterval(function() {			
+			req0b.refresh();
+			req0.refresh();
+			req1.refresh();
+			req1b.refresh();
+			req2.refresh();
+			req2b.refresh();
+			req3b.refresh();
+		}, 1000 * 60 * 0.5);
+		
+	});
+	</script>
+	
+</body>
+</html>
